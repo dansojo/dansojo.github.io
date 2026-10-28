@@ -88,23 +88,29 @@ async function check(name, run) {
       const trigger = page.locator('#work-ictc .work-actions a[data-pdf]');
       await trigger.click();
       assert.equal(await page.locator('#pdf-viewer').evaluate(d => d.open), true);
-      await page.locator('#pdf-frame').waitFor();
-      await page.waitForTimeout(2500);
-      report.pdfFrames = page.frames().map(f => f.url());
+      await page.waitForFunction(() => { const image=document.getElementById('pdf-page'); return !image.hidden && image.complete && image.naturalWidth>0; });
       await page.screenshot({ path: `${output}/pdf-${width}.jpg`, quality: 85 });
       assert.equal(await page.locator('#pdf-close').evaluate(e => e === document.activeElement), true);
       assert.equal(await page.locator('#pdf-viewer').evaluate(d => d.scrollWidth <= d.clientWidth + 1), true);
-      assert.ok((await page.locator('#pdf-frame').getAttribute('src')).endsWith('ictc.pdf#view=FitH'));
+      assert.ok((await page.locator('#pdf-page').getAttribute('src')).endsWith('ictc/page-1.jpg'));
+      await page.locator('#pdf-next').click();
+      await page.waitForFunction(() => document.getElementById('pdf-page').src.endsWith('page-2.jpg') && !document.getElementById('pdf-page').hidden);
+      assert.equal(await page.locator('#pdf-count').innerText(), '2 / 4');
+      await page.locator('#pdf-zoom-in').click();
+      assert.equal(await page.locator('#pdf-page').evaluate(e => e.style.width), '125%');
+      await page.locator('#pdf-fit').click();
       const downloadEvent = page.waitForEvent('download');
       await page.locator('#pdf-download').click();
       assert.equal((await downloadEvent).suggestedFilename(), 'ictc.pdf');
       await page.keyboard.press('Escape');
-      await page.waitForFunction(() => !document.getElementById('pdf-viewer').open && !document.getElementById('pdf-frame').hasAttribute('src'));
+      await page.waitForFunction(() => !document.getElementById('pdf-viewer').open && !document.getElementById('pdf-page').hasAttribute('src'));
       assert.equal(await page.locator('#pdf-viewer').evaluate(d => d.open), false);
       assert.equal(await trigger.evaluate(e => e === document.activeElement), true);
-      assert.equal(await page.locator('#pdf-frame').getAttribute('src'), null);
+      assert.equal(await page.locator('#pdf-page').getAttribute('src'), null);
       await page.locator('#publication a[data-pdf]').first().click();
       assert.ok((await page.locator('#pdf-title').innerText()).includes('발표 포스터'));
+      await page.waitForFunction(() => !document.getElementById('pdf-page').hidden && document.getElementById('pdf-count').textContent==='1 / 1');
+      await page.screenshot({path: `${output}/poster-${width}.jpg`,quality:85});
       await page.locator('#pdf-close').click();
       assert.equal(await page.locator('#pdf-viewer').evaluate(d => d.open), false);
     });
@@ -130,6 +136,17 @@ async function check(name, run) {
     await page.waitForTimeout(400);
     assert.equal(await page.evaluate(() => window.__draws), count);
     assert.equal(await page.locator('#motion-toggle').isVisible(), false);
+  });
+  await check('All 30 document page previews load and match source hashes', async () => {
+    const crypto = require('node:crypto');
+    const manifest = await (await context.request.get(new URL('assets/document-pages.json',base).href)).json();
+    let total = 0;
+    for (const [filename, entry] of Object.entries(manifest)) {
+      const pdf = await context.request.get(new URL('assets/documents/'+filename,base).href);
+      assert.equal(crypto.createHash('sha256').update(await pdf.body()).digest('hex'),entry.sha256);
+      for (const p of entry.pages) { const img = await context.request.get(new URL(p.src,base).href); assert.equal(img.status(),200); assert.equal((await img.body()).subarray(0,2).toString('hex'),'ffd8'); total++; }
+    }
+    assert.equal(total,30);
   });
   await check('No JavaScript runtime errors', () => assert.deepEqual(report.errors, []));
   await browser.close();
