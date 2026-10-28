@@ -25,6 +25,8 @@ jobs:
         env:
           QA_BASE_URL: http://127.0.0.1:8000/
         run: xvfb-run -a node tests/browser-qa.cjs
+      - name: Inspect native PDF renderer in a regular browser profile
+        run: xvfb-run -a node tests/pdf-browser-diagnostic.cjs
       - name: Save review evidence on QA branch
         if: always()
         run: |
