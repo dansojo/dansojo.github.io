@@ -9,7 +9,7 @@ let data = try Data(contentsOf: URL(fileURLWithPath: args[1]))
 let content = try JSONSerialization.jsonObject(with: data) as! [String: Any]
 let root = URL(fileURLWithPath: args[2])
 let output = URL(fileURLWithPath: args[3])
-let W: CGFloat = 595.2756, H: CGFloat = 841.8898, margin: CGFloat = 44
+let W: CGFloat = 595.2756, H: CGFloat = 841.8898, margin: CGFloat = 36
 let ink = NSColor(calibratedRed: 0.12, green: 0.13, blue: 0.17, alpha: 1)
 let muted = NSColor(calibratedRed: 0.38, green: 0.39, blue: 0.44, alpha: 1)
 let accent = NSColor(calibratedRed: 0.39, green: 0.28, blue: 0.58, alpha: 1)
@@ -18,7 +18,7 @@ let bodyWidth = W - margin * 2
 var media = CGRect(x: 0, y: 0, width: W, height: H)
 guard let consumer = CGDataConsumer(url: output as CFURL),
       let ctx = CGContext(consumer: consumer, mediaBox: &media,
-        [kCGPDFContextTitle as String: "김태호 — 이력서 및 포트폴리오", kCGPDFContextAuthor as String: "김태호", kCGPDFContextSubject as String: "A4 통합 이력서 및 포트폴리오 · 자료 기준 2026.10.28"] as CFDictionary) else { fatalError("Cannot create PDF") }
+        [kCGPDFContextTitle as String: "김태호 — Resume / CV", kCGPDFContextAuthor as String: "김태호", kCGPDFContextSubject as String: "A4 1페이지 이력서 · 자료 기준 2026.10.28"] as CFDictionary) else { fatalError("Cannot create PDF") }
 var page = 0
 var pageBottom: CGFloat = 0
 var overflows: [String] = []
@@ -26,7 +26,7 @@ func string(_ d: [String:Any], _ key: String) -> String { d[key] as? String ?? "
 func strings(_ d: [String:Any], _ key: String) -> [String] { d[key] as? [String] ?? [] }
 func dicts(_ d: [String:Any], _ key: String) -> [[String:Any]] { d[key] as? [[String:Any]] ?? [] }
 func attributed(_ text: String, size: CGFloat, bold: Bool = false, color: NSColor = ink) -> NSAttributedString {
-  let style = NSMutableParagraphStyle(); style.lineSpacing = size * 0.34
+  let style = NSMutableParagraphStyle(); style.lineSpacing = size * 0.22
   style.lineBreakMode = .byWordWrapping
   let font = NSFont(name: bold ? "AppleSDGothicNeo-SemiBold" : "AppleSDGothicNeo-Regular", size: size) ?? NSFont.systemFont(ofSize:size, weight:bold ? .semibold : .regular)
   return NSAttributedString(string:text, attributes:[.font:font, .foregroundColor:color, .paragraphStyle:style])
@@ -36,7 +36,7 @@ func attributed(_ text: String, size: CGFloat, bold: Bool = false, color: NSColo
   let a = attributed(value, size:size, bold:bold, color:color)
   let fs = CTFramesetterCreateWithAttributedString(a)
   let fit = CTFramesetterSuggestFrameSizeWithConstraints(fs, CFRange(location:0,length:0), nil, CGSize(width:width,height:10000), nil)
-  let height = ceil(fit.height) + 5
+  let height = ceil(fit.height) + 2
   let path = CGPath(rect:CGRect(x:x,y:H-y-height,width:width,height:height),transform:nil)
   let frame = CTFramesetterCreateFrame(fs,CFRange(location:0,length:0),path,nil)
   ctx.saveGState();ctx.textMatrix = .identity; CTFrameDraw(frame,ctx);ctx.restoreGState()
@@ -59,7 +59,7 @@ func end() {
   rule(H-40)
   // Footers are excluded from content-fit calculations.
   text("자료 기준 2026.10.28 · dansojo.github.io",y:H-30,size:7,color:muted)
-  text(String(format:"%02d / 09",page),x:W-100,y:H-30,width:56,size:7,color:muted)
+  text(String(format:"%02d / 01",page),x:W-100,y:H-30,width:56,size:7,color:muted)
   ctx.endPDFPage()
 }
 func absolute(_ path: String) -> String {
@@ -71,118 +71,53 @@ func absolute(_ path: String) -> String {
   if let u=URL(string:absolute(url)) {ctx.setURL(u as CFURL,for:CGRect(x:x,y:H-next,width:width,height:next-y))}
   return next
 }
-func image(_ path: String, y: CGFloat, height: CGFloat) {
-  let url = root.appendingPathComponent(path.replacingOccurrences(of:"./",with:""))
-  guard let image=NSImage(contentsOf:url),let cg=image.cgImage(forProposedRect:nil,context:nil,hints:nil) else {fatalError("Missing image \(path)")}
-  let ratio=min(bodyWidth/CGFloat(cg.width),height/CGFloat(cg.height))
-  let w=CGFloat(cg.width)*ratio,h=CGFloat(cg.height)*ratio
-  ctx.saveGState();ctx.setFillColor(NSColor(calibratedWhite:0.96,alpha:1).cgColor);ctx.fill(CGRect(x:margin,y:H-y-height,width:bodyWidth,height:height))
-  ctx.draw(cg,in:CGRect(x:margin+(bodyWidth-w)/2,y:H-y-height+(height-h)/2,width:w,height:h));ctx.restoreGState()
-  pageBottom=max(pageBottom,y+height)
-}
-func heading(_ title:String,_ label:String) -> CGFloat {
-  var y=text(label,y:62,size:8,bold:true,color:accent)
-  y=text(title,y:y+12,size:25,bold:true)
-  return y+18
-}
 
-// 1. Identity, complete introduction and document guide.
-start("PROFILE / DOCUMENT GUIDE")
-var y=text("김태호",y:82,size:44,bold:true)
-y=text("AI Development · Computer Vision · Data Analysis",y:y+4,size:12,color:accent)
-y=text(string(content,"intro"),y:y+26,size:13)
-for p in strings(content,"about") { y=text(p,y:y+15,size:11) }
-y += 24;rule(y);y += 20
-y=text("연락처와 작업 링크",y:y,size:13,bold:true)
-y=link("이메일  ·  "+string(content,"email"),url:"mailto:"+string(content,"email"),y:y+12)
-y=link("GitHub  ·  "+string(content,"github"),url:string(content,"github"),y:y+4)
-y=link("웹 포트폴리오  ·  "+string(content,"site"),url:string(content,"site"),y:y+4)
-y += 25;y=text("문서 구성",y:y,size:13,bold:true)
-for item in ["02  경력 및 운영 경험", "03–06  대표 프로젝트 4개 · 기여·결과·평가 조건", "07  OpenCV · Solar 추가 프로젝트", "08  논문 및 발표 · ICTC 포스터", "09  학력·교육·기술·자격"] { y=text(item,y:y+7,size:10,color:muted) }
-y=text("웹페이지 내용을 A4 세로형으로 정리한 통합본입니다. 개별 프로젝트 원본 PDF와 코드는 각 항목의 링크에서 확인할 수 있습니다. 논문 원문은 제공 자료에 없어 포함하지 않았습니다.",y:y+22,size:8.5,color:muted)
-end()
-
-// 2. Complete career entries.
-start("EXPERIENCE")
-y=heading("경력 및 운영 경험","BACKGROUND / 01")
-for e in dicts(content,"experience") {
-  y=text(string(e,"date"),y:y,size:9,bold:true,color:accent)
-  y=text(string(e,"title"),y:y+8,size:19,bold:true)
-  for p in strings(e,"paragraphs") {y=text(p,y:y+9,size:10.5)}
-  for b in strings(e,"bullets") {y=text("• "+b,y:y+6,size:10.5)}
-  y += 24;rule(y);y += 24
+func section(_ label:String,_ y:CGFloat)->CGFloat {
+  let next=text(label,y:y,size:10.5,bold:true,color:accent)
+  rule(next+3)
+  return next+10
 }
-end()
-
-// 3–6. Four complete website case studies including collapsed details.
-for (i,p) in dicts(content,"projects").enumerated() {
-  start("SELECTED WORK / 0\(i+1)")
-  y=text(string(p,"meta"),y:59,size:7.5,bold:true,color:accent)
-  y=text(string(p,"name"),y:y+8,size:25,bold:true)
-  y=text(string(p,"heading"),y:y+3,size:13,bold:true)
-  y=text(string(p,"description"),y:y+9,size:10)
-  y=text(strings(p,"tags").joined(separator:"  /  "),y:y+6,size:8,color:accent)
-  let imgTop=y+13
-  image(string(p,"image"),y:imgTop,height:218)
-  y=text(string(p,"caption"),y:imgTop+223,size:7.5,color:muted)
-  y=text(strings(p,"metrics").joined(separator:"    |    "),y:y+10,size:10,bold:true,color:accent)
-  for d in dicts(p,"details") {
-    y=text(string(d,"title"),y:y+10,size:8.5,bold:true,color:accent)
-    y=text(string(d,"body"),y:y+3,size:9)
-  }
-  for l in dicts(p,"links") {y=link(string(l,"title")+" ↗",url:string(l,"url"),y:y+7)}
-  end()
+func entry(_ title:String,_ detail:String,_ y:CGFloat)->CGFloat {
+  let next=text(title,y:y,size:9.7,bold:true)
+  return text(detail,y:next+3,size:9.1)+10
 }
+ctx.beginPDFPage(nil);ctx.setFillColor(NSColor.white.cgColor);ctx.fill(media)
+var y=text("김태호",y:34,size:27,bold:true)
+text("RESUME / CV",x:W-150,y:44,width:114,size:8,bold:true,color:accent)
+y=text("AI Development · Computer Vision · Data Analysis",y:y+3,size:10,color:accent)
+let contactY=y+7
+link("sinzenight@gmail.com",url:"mailto:sinzenight@gmail.com",y:contactY,x:margin,width:180)
+link("github.com/dansojo",url:"https://github.com/dansojo",y:contactY,x:margin+190,width:155)
+y=link("dansojo.github.io ↗",url:"https://dansojo.github.io/",y:contactY,x:margin+365,width:158)+12
+y=text("응용통계와 매입·재고·매출 관리 경험을 바탕으로 데이터 분석, 모델 검증, AI 도구 구현을 연결합니다.",y:y,size:9.5)+12
 
-// 7. Additional projects with all implementation caveats.
-start("MORE EXPLORATIONS")
-y=heading("비교하고, 선택한 기록","ADDITIONAL PROJECTS")
-for e in dicts(content,"extra") {
-  y=text(string(e,"meta"),y:y,size:8,bold:true,color:accent)
-  y=text(string(e,"title"),y:y+8,size:18,bold:true)
-  for p in strings(e,"paragraphs") {y=text(p,y:y+12,size:10.5)}
-  y=text(string(e,"metric"),y:y+12,size:11,bold:true,color:accent)
-  y=link("프로젝트 원본 PDF ↗",url:string(e,"pdf"),y:y+14)
-  y += 24;rule(y);y += 24
-}
-end()
+y=section("핵심 역량",y)
+y=text("Python · SQL · Pandas · NumPy · Scikit-learn · PyTorch · OpenCV · Grad-CAM",y:y,size:9.1)
+y=text("Azure · Streamlit · Gradio · LangChain · Qdrant · FastAPI  |  데이터 정제 · 모델 평가 · AI 도구 활용",y:y+3,size:9.1)+14
 
-// 8. Research and vector poster, clearly distinguished from the paper.
-start("RESEARCH & PUBLICATION")
-let paper=content["publication"] as! [String:Any]
-y=text("논문 및 발표",y:60,size:24,bold:true)
-y=text(string(paper,"title"),y:y+12,size:19,bold:true)
-y=text(string(paper,"subtitle"),y:y+4,size:10,color:accent)
-for p in strings(paper,"paragraphs") { y=text(p,y:y+9,size:9.5) }
-for l in dicts(paper,"links") { y=link(string(l,"title")+" ↗",url:string(l,"url"),y:y+5) }
-let posterTop=y+15
-let posterHeight=min(350,H-65-posterTop)
-guard let poster=PDFDocument(url:root.appendingPathComponent("assets/documents/ictc-poster.pdf"))?.page(at:0) else {fatalError("Missing poster")}
-let box=poster.bounds(for:.mediaBox)
-let scale=min(bodyWidth/box.width,posterHeight/box.height)
-ctx.saveGState();ctx.translateBy(x:margin+(bodyWidth-box.width*scale)/2,y:H-posterTop-box.height*scale);ctx.scaleBy(x:scale,y:scale);poster.draw(with:.mediaBox,to:ctx);ctx.restoreGState()
-pageBottom=max(pageBottom,posterTop+box.height*scale)
-end()
+y=section("연구 및 프로젝트",y)
+y=entry("ICTC 2026 센서 결측 구조 연구  |  2026 · 단독 저자 · 10.15 포스터 발표", "ETRI 10명에서 동일 삭제량의 결측 패턴을 비교했습니다. 상태 비율·강도 오차 차이 중앙값 0.463·0.376. 전체 결론 유보. 실험·코드·검증·집필에 AI 도구 활용, 복원 후 예측 성능 향상은 미검증.",y)
+y=text("Beyond Missingness Rate: Structured Stress Testing and Feature Contracts for Passive Sensing Data",y:y-6,size:7.6,color:muted)+10
+y=entry("Fundus Vision  |  2026.02–04 · 개인", "안저 10개 클래스의 불균형 대응 전략 비교, 오류 분석, Grad-CAM·Gradio 데모 구현. 내부 3,249장 평가 Accuracy 86.98%, Macro F1 0.8992. 분할 독립성·외부 임상 검증은 미확인.",y)
+y=entry("Money Football  |  2026.06 · 팀 / PM", "5개 리그·96개 팀 데이터 수집·정제, Scout 백엔드 공동 구현, Azure 환경 구성·역할 조율. 예측 2,453건·24개 SHAP 변수 전달. 모델 학습·평가는 팀원이 담당했습니다.",y)
+y=entry("Tax RAG Lab  |  2026.09–진행 중 · 개인", "제품 범위·모델·예산·답변 흐름을 검토하고 Codex가 구현·검증을 지원했습니다. 내부 9문항 Recall@5 0.667→1.000. 로컬·소규모 평가이며 세부 수치는 2026.09.10 기준, 실제 사용자 효과는 미검증.",y)
+y=entry("OpenCV Preprocessing Advisor  |  2026.08 · 개인", "117장·6개 상태의 5-fold RTrees 비교에서 Macro F1 원본 0.789 / CLAHE+Bilateral 0.731. 이 조건에서는 원본을 유지했습니다. 공식 이상 탐지 평가가 아닙니다.",y)
 
-// 9. Education, technologies and certificates in full.
-start("EDUCATION / SKILLS")
-y=heading("학력 · 교육 · 기술","BACKGROUND / 02")
-for e in dicts(content,"education") {
-  y=text(string(e,"date"),y:y,size:8,bold:true,color:accent)
-  y=text(string(e,"title"),y:y+4,size:12,bold:true)
-  for p in strings(e,"paragraphs") { y=text(p,y:y+3,size:9) }
-  y += 13
-}
-rule(y);y += 16
-for s in dicts(content,"skills") {
-  y=text(string(s,"title"),y:y,size:9,bold:true,color:accent)
-  y=text(strings(s,"items").joined(separator:" · "),y:y+4,size:9)
-  y += 11
-}
-y=text(string(content,"skillsNote"),y:y,size:8,color:muted)
-y=text("자격",y:y+14,size:11,bold:true)
-for c in strings(content,"certificates") { y=text(c,y:y+5,size:9) }
-end()
-ctx.closePDF()
-if !overflows.isEmpty { fputs("Content overflow: \(overflows.joined(separator:", "))\n",stderr);exit(1) }
-print("Built \(page)-page A4 PDF: \(output.path)")
+y=section("경력",y+1)
+y=entry("(주)선수인베스트먼트  |  운영총괄 매니저  |  2025.05–2026.05", "청과 매장 매입·발주·재고·판매·정산 총괄, 판매 흐름·원가 기반 운영 조정. 근무 종료 후 2026.09 AI 개발 도구로 장부 웹앱을 제작하고 실제 자료와 대조·개선했습니다.",y)
+y=entry("CU 옥수역점  |  점장 및 매장 운영  |  2018.01–2022.01", "상품 발주·재고·매출, 고객 응대, 근무 일정 및 점포 운영 전반 담당.",y)
+
+y=section("학력 및 교육",y+1)
+y=text("한신대학교 응용통계학과 학사  |  2014.03–2022.02",y:y,size:9.3,bold:true)
+y=text("SeSAC·Microsoft Azure AI 서비스 개발 과정 수료  |  2026.05–08",y:y+5,size:9.1)
+y=text("LG Aimers · LG경영개발원 AI연구원  |  2024.01–02",y:y+3,size:9.1)
+y=text("멀티캠퍼스 AI 융복합 프로젝트 교육  |  2022.01–06",y:y+3,size:9.1)+12
+
+y=section("자격",y)
+y=text("SQL 개발자 (2023.10) · 컴퓨터활용능력 2급 · 사회조사분석사 2급",y:y,size:9.1)
+if y>H-53 {fputs("One-page resume overflow: \(y)\n",stderr);exit(1)}
+rule(H-39)
+text("상세 프로젝트·평가 조건·발표 자료: dansojo.github.io",y:H-30,size:7,color:muted)
+text("2026.10.28 · 1 / 1",x:W-150,y:H-30,width:114,size:7,color:muted)
+ctx.endPDFPage();ctx.closePDF()
+print("Built one-page A4 Resume/CV, content bottom: \(y), output: \(output.path)")

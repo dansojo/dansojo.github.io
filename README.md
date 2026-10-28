@@ -31,11 +31,13 @@ Content follows the 2026-10-28 supplied production handoff. Project PDFs are unc
 
 Publish the repository root from `main` with GitHub Pages. `.nojekyll` keeps static assets intact. PDFs and screenshots are portfolio materials and are not implicitly licensed as software.
 
-## A4 combined PDF
+## One-page A4 Resume / CV
 
-The header and hero provide a direct download of `assets/documents/taeho-kim-portfolio-a4.pdf`. The 9-page A4 portrait document includes all resume/project prose, collapsed role/evaluation notes, screenshots, research poster and clickable source links. It does not append the full original project PDF decks. The unavailable paper manuscript remains explicitly excluded.
+The header and hero download `assets/documents/taeho-kim-portfolio-a4.pdf`, a one-page A4 portrait resume. The file keeps the existing URL for compatibility. It contains a compact profile, core skills, five selected research/project entries, career, education and certificates. Detailed portfolios and the poster remain on the website.
 
-To regenerate on macOS without external dependencies:
+The concise editorial wording lives in `scripts/build-pdf.swift` and follows the confirmed 2026-10-28 handoff. Update that wording deliberately when facts change; extraction alone does not rewrite the summary.
+
+Build and verify on macOS:
 
 ```sh
 python3 scripts/export-content.py /private/tmp/resume-export.json
@@ -43,4 +45,4 @@ swift scripts/build-pdf.swift /private/tmp/resume-export.json "$PWD" "$PWD/asset
 swift tests/pdf.test.swift "$PWD"
 ```
 
-Rebuild the PDF when website content changes. Generation fails if content overflows its page. The PDF is designed for printing on white paper; the website retains its dark theme.
+The generator fails on content overflow. The PDF uses white paper, selectable text, and clickable email/GitHub/portfolio links. Phone number and address remain excluded.
