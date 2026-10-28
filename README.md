@@ -7,7 +7,7 @@ Buildless HTML/CSS/JavaScript site hosted at https://dansojo.github.io/.
 - `index.html`: source-checked Korean resume, visual project case studies, research/publication, PDF dialog.
 - `assets/style.css`: dark responsive layout and print styles.
 - `assets/viewer.js`: native dialog PDF viewer with direct-link fallback.
-- `assets/liquid.js`: WebGL liquid hero, reduced-motion and offscreen/visibility pause.
+- `assets/liquid.js`: WebGL liquid hero, manual pause/resume, reduced-motion and offscreen/visibility pause.
 - `assets/previews/`: previews rendered from supplied project PDFs.
 - `assets/documents/`: six original project PDFs and the public ICTC poster. Paper manuscript is not available yet; never label a research portfolio as the paper.
 - `tests/`: Node behavioral checks without dependencies.
@@ -46,3 +46,7 @@ swift tests/pdf.test.swift "$PWD"
 ```
 
 The generator fails on content overflow. The PDF uses white paper, selectable text, and clickable email/GitHub/portfolio links. Phone number and address remain excluded.
+
+## Final verification (2026-10-28)
+
+Source TXT manuscripts were compared against the site and one-page resume. Checks passed for source caveats, seven PDF previews, two one-page download links, local references, accessibility ID targets, motion behavior, and PDF A4 page size/content. The generated PDF was rendered and inspected. Browser screenshot checks could not run because local Chrome terminated in the execution sandbox; no desktop/mobile visual QA is claimed.

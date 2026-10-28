@@ -45,24 +45,32 @@
   gl.useProgram(program);const buffer=gl.createBuffer();gl.bindBuffer(gl.ARRAY_BUFFER,buffer);gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
   const attr=gl.getAttribLocation(program,'a');gl.enableVertexAttribArray(attr);gl.vertexAttribPointer(attr,2,gl.FLOAT,false,0,0);
   const res=gl.getUniformLocation(program,'resolution'),clock=gl.getUniformLocation(program,'time');
+  const toggle=document.getElementById('motion-toggle');
   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
-  let visible=true,request=0,last=0,start=performance.now(),lost=false;
+  let visible=true,request=0,last=0,start=performance.now(),lost=false,userPaused=false;
   function draw(now){
     request=0;
-    if(lost||document.hidden||!visible)return;
+    if(lost||document.hidden||!visible||userPaused)return;
     if(now-last>32||reduced.matches){
       const size=Math.min(760,Math.round(canvas.clientWidth*Math.min(devicePixelRatio||1,1.5)));
       if(canvas.width!==size||canvas.height!==size){canvas.width=size;canvas.height=size;gl.viewport(0,0,size,size);}
       gl.uniform2f(res,size,size);gl.uniform1f(clock,reduced.matches?2.4:(now-start)/1000);gl.drawArrays(gl.TRIANGLES,0,6);canvas.classList.add('ready');last=now;
     }
-    if(!reduced.matches)request=requestAnimationFrame(draw);
+    if(!reduced.matches&&!userPaused)request=requestAnimationFrame(draw);
   }
-  function resume(){if(!request&&!document.hidden&&visible&&!lost)request=requestAnimationFrame(draw);}
+  function resume(){if(!request&&!document.hidden&&visible&&!lost&&!userPaused)request=requestAnimationFrame(draw);}
   function pause(){cancelAnimationFrame(request);request=0;}
   if('IntersectionObserver' in window)new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;visible?resume():pause();}).observe(canvas);
   document.addEventListener('visibilitychange',()=>document.hidden?pause():resume());
-  reduced.addEventListener('change',()=>{pause();resume();});
+  function updateToggle(){
+    if(!toggle)return;
+    toggle.hidden=reduced.matches||lost;
+    toggle.textContent=userPaused?'모션 재생':'모션 일시정지';
+  }
+  toggle?.addEventListener('click',()=>{userPaused=!userPaused;userPaused?pause():resume();updateToggle();});
+  reduced.addEventListener('change',()=>{pause();updateToggle();resume();});
   window.addEventListener('resize',resume);
-  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();lost=true;pause();canvas.classList.remove('ready');});
+  canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();lost=true;pause();canvas.classList.remove('ready');updateToggle();});
+  updateToggle();
   resume();
 })();
