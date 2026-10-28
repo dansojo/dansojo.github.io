@@ -1,6 +1,6 @@
 {
-  "base": "http://127.0.0.1:8000/",
-  "date": "2026-10-28T14:01:35.314Z",
+  "base": "https://dansojo.github.io/",
+  "date": "2026-10-28T14:05:07.238Z",
   "checks": [
     {
       "name": "Page loads over HTTP",
@@ -46,13 +46,13 @@
       "name": "All seven PDF documents respond with PDF content",
       "pass": true,
       "detail": [
-        "http://127.0.0.1:8000/assets/documents/ictc.pdf",
-        "http://127.0.0.1:8000/assets/documents/fundus.pdf",
-        "http://127.0.0.1:8000/assets/documents/money.pdf",
-        "http://127.0.0.1:8000/assets/documents/rag.pdf",
-        "http://127.0.0.1:8000/assets/documents/opencv.pdf",
-        "http://127.0.0.1:8000/assets/documents/solar.pdf",
-        "http://127.0.0.1:8000/assets/documents/ictc-poster.pdf"
+        "https://dansojo.github.io/assets/documents/ictc.pdf",
+        "https://dansojo.github.io/assets/documents/fundus.pdf",
+        "https://dansojo.github.io/assets/documents/money.pdf",
+        "https://dansojo.github.io/assets/documents/rag.pdf",
+        "https://dansojo.github.io/assets/documents/opencv.pdf",
+        "https://dansojo.github.io/assets/documents/solar.pdf",
+        "https://dansojo.github.io/assets/documents/ictc-poster.pdf"
       ]
     },
     {
