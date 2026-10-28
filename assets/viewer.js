@@ -55,7 +55,7 @@
   zoomIn.addEventListener('click',()=>setZoom(zoom+.25));
   zoomOut.addEventListener('click',()=>setZoom(zoom-.25));
   fit.addEventListener('click',()=>{setZoom(1);stage.scrollTo({top:0,left:0});});
-  stage.addEventListener('keydown',event=>{if(event.key==='ArrowRight'){event.preventDefault();renderPage(index+1);}if(event.key==='ArrowLeft'){event.preventDefault();renderPage(index-1);}});
+  stage.addEventListener('keydown',event=>{if(zoom>1)return;if(event.key==='ArrowRight'){event.preventDefault();renderPage(index+1);}if(event.key==='ArrowLeft'){event.preventDefault();renderPage(index-1);}});
   close.addEventListener('click',()=>dialog.close());
   dialog.addEventListener('click',event=>{if(event.target===dialog)dialog.close();});
   dialog.addEventListener('close',()=>{generation++;pages=[];image.removeAttribute('src');image.hidden=true;text.textContent='';document.body.classList.remove('viewer-open');trigger?.focus();});

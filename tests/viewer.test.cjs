@@ -28,7 +28,10 @@ const event=(extra={})=>({target:{closest:()=>anchor},button:0,preventDefault(){
  assert.equal(nodes['pdf-next'].disabled,true);
  assert.equal(nodes['pdf-text'].textContent,'Page two');
  nodes['pdf-zoom-in'].events.click();assert.equal(nodes['pdf-page'].style.width,'125%');
+ nodes['pdf-stage'].events.keydown({key:'ArrowLeft',preventDefault(){throw Error('Zoomed horizontal scrolling intercepted');}});
+ assert.equal(nodes['pdf-count'].textContent,'2 / 2');
  nodes['pdf-fit'].events.click();assert.equal(nodes['pdf-page'].style.width,'100%');
+ let handled=false;nodes['pdf-stage'].events.keydown({key:'ArrowLeft',preventDefault(){handled=true;}});assert.equal(handled,true);assert.equal(nodes['pdf-count'].textContent,'1 / 2');
  nodes['pdf-close'].events.click();assert.equal(nodes['pdf-viewer'].open,false);assert.equal(focused,'trigger');assert.equal(nodes['pdf-page'].src,undefined);
  await click(event());assert.equal(fetchCount,1);nodes['pdf-close'].events.click();
  await click(event({ctrlKey:true,preventDefault(){throw Error('Modified click intercepted');}}));

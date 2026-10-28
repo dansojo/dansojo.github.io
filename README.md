@@ -6,15 +6,16 @@ Buildless HTML/CSS/JavaScript site hosted at https://dansojo.github.io/.
 
 - `index.html`: source-checked Korean resume, visual project case studies, research/publication, PDF dialog.
 - `assets/style.css`: dark responsive layout and print styles.
-- `assets/viewer.js`: native dialog PDF viewer with direct-link fallback.
+- `assets/viewer.js`: native dialog document viewer with direct PDF links, page navigation and zoom.
 - `assets/liquid.js`: WebGL liquid hero, manual pause/resume, reduced-motion and offscreen/visibility pause.
-- `assets/previews/`: previews rendered from supplied project PDFs.
+- `assets/previews/`: project card images rendered from supplied PDFs.
+- `assets/document-pages/` and `assets/document-pages.json`: 30 page previews and extracted source text from seven original PDFs; the manifest records SHA-256 hashes. Images load on demand when navigating the dialog.
 - `assets/documents/`: six original project PDFs and the public ICTC poster. Paper manuscript is not available yet; never label a research portfolio as the paper.
 - `tests/`: Node behavioral checks without dependencies.
 
 ## Preview
 
-Open `index.html` directly or run `python3 -m http.server 8000` and visit http://localhost:8000.
+Run `python3 -m http.server 8000` and visit http://localhost:8000. Use HTTP so the document preview manifest can load.
 
 ## Checks
 
@@ -49,4 +50,12 @@ The generator fails on content overflow. The PDF uses white paper, selectable te
 
 ## Final verification (2026-10-28)
 
-Source TXT manuscripts were compared against the site and one-page resume. Checks passed for source caveats, seven PDF previews, two one-page download links, local references, accessibility ID targets, motion behavior, and PDF A4 page size/content. The generated PDF was rendered and inspected. Browser screenshot checks could not run because local Chrome terminated in the execution sandbox; no desktop/mobile visual QA is claimed.
+Source TXT manuscripts were compared against the site and one-page resume. Checks passed for source caveats, seven PDF previews, two one-page download links, local references, accessibility ID targets, motion behavior, and PDF A4 page size/content. The generated PDF was rendered and inspected. Real Chromium checks and desktop/mobile screenshots run in GitHub Actions on `qa/browser-review-20261028`. They cover 320–1440px layouts, liquid motion and reduced motion, document page navigation/zoom, dialog focus/close, all original PDFs, all 30 page images and their source hashes, and the one-page resume download. The PDF popup uses rendered pages so its contents display independently of browser PDF plugin support. The resume itself remains a selectable-text, one-page A4 PDF. Review evidence is stored in that branch under `qa-results/`.
+
+Rebuild page previews after changing an original PDF (macOS):
+
+```sh
+swift scripts/build-document-previews.swift "$PWD"
+```
+
+The full source PDFs remain available through the dialog’s new-tab and download links. Preview zoom is limited by the rendered image resolution.
