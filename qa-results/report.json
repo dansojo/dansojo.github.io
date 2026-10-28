@@ -1,0 +1,171 @@
+{
+  "base": "https://dansojo.github.io/",
+  "date": "2026-10-28T13:36:54.452Z",
+  "checks": [
+    {
+      "name": "Page loads over HTTP",
+      "pass": true
+    },
+    {
+      "name": "Liquid shader renders and motion can pause/resume",
+      "pass": true
+    },
+    {
+      "name": "No horizontal overflow at 1440px",
+      "pass": true
+    },
+    {
+      "name": "No horizontal overflow at 1024px",
+      "pass": true
+    },
+    {
+      "name": "No horizontal overflow at 768px",
+      "pass": false,
+      "error": "{\"width\":768,\"scrollWidth\":780,\"overflow\":[{\"tag\":\"DIV\",\"class\":\"hero-art\",\"text\":\"IDEAS INTO APPLICATIONSDATA ↔ VISION ↔ AI\"},{\"tag\":\"DIV\",\"class\":\"art-orbit orbit-one\",\"text\":\"\"},{\"tag\":\"DIV\",\"class\":\"art-orbit orbit-two\",\"text\":\"\"},{\"tag\":\"CANVAS\",\"class\":\"ready\",\"text\":\"\"}]}"
+    },
+    {
+      "name": "No horizontal overflow at 721px",
+      "pass": false,
+      "error": "{\"width\":721,\"scrollWidth\":730,\"overflow\":[{\"tag\":\"DIV\",\"class\":\"hero-art\",\"text\":\"IDEAS INTO APPLICATIONSDATA ↔ VISION ↔ AI\"},{\"tag\":\"DIV\",\"class\":\"art-orbit orbit-one\",\"text\":\"\"},{\"tag\":\"DIV\",\"class\":\"art-orbit orbit-two\",\"text\":\"\"},{\"tag\":\"CANVAS\",\"class\":\"ready\",\"text\":\"\"}]}"
+    },
+    {
+      "name": "No horizontal overflow at 720px",
+      "pass": true
+    },
+    {
+      "name": "No horizontal overflow at 390px",
+      "pass": true
+    },
+    {
+      "name": "No horizontal overflow at 320px",
+      "pass": true
+    },
+    {
+      "name": "Project images load",
+      "pass": true
+    },
+    {
+      "name": "All seven PDF documents respond with PDF content",
+      "pass": true,
+      "detail": [
+        "https://dansojo.github.io/assets/documents/ictc.pdf",
+        "https://dansojo.github.io/assets/documents/fundus.pdf",
+        "https://dansojo.github.io/assets/documents/money.pdf",
+        "https://dansojo.github.io/assets/documents/rag.pdf",
+        "https://dansojo.github.io/assets/documents/opencv.pdf",
+        "https://dansojo.github.io/assets/documents/solar.pdf",
+        "https://dansojo.github.io/assets/documents/ictc-poster.pdf"
+      ]
+    },
+    {
+      "name": "Resume link downloads PDF",
+      "pass": true
+    },
+    {
+      "name": "PDF dialog interaction at 1440px",
+      "pass": false,
+      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'https://dansojo.github.io/assets/documents/ictc.pdf#view=FitH'\n- null\n"
+    },
+    {
+      "name": "PDF dialog interaction at 390px",
+      "pass": true
+    },
+    {
+      "name": "PDF dialog interaction at 320px",
+      "pass": true
+    },
+    {
+      "name": "Expanded project details remain readable on mobile",
+      "pass": true
+    },
+    {
+      "name": "Reduced motion is static and toggle is hidden",
+      "pass": true
+    },
+    {
+      "name": "No JavaScript runtime errors",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "layouts": [
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "overflow": []
+    },
+    {
+      "width": 1024,
+      "scrollWidth": 1024,
+      "overflow": []
+    },
+    {
+      "width": 768,
+      "scrollWidth": 780,
+      "overflow": [
+        {
+          "tag": "DIV",
+          "class": "hero-art",
+          "text": "IDEAS INTO APPLICATIONSDATA ↔ VISION ↔ AI"
+        },
+        {
+          "tag": "DIV",
+          "class": "art-orbit orbit-one",
+          "text": ""
+        },
+        {
+          "tag": "DIV",
+          "class": "art-orbit orbit-two",
+          "text": ""
+        },
+        {
+          "tag": "CANVAS",
+          "class": "ready",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "width": 721,
+      "scrollWidth": 730,
+      "overflow": [
+        {
+          "tag": "DIV",
+          "class": "hero-art",
+          "text": "IDEAS INTO APPLICATIONSDATA ↔ VISION ↔ AI"
+        },
+        {
+          "tag": "DIV",
+          "class": "art-orbit orbit-one",
+          "text": ""
+        },
+        {
+          "tag": "DIV",
+          "class": "art-orbit orbit-two",
+          "text": ""
+        },
+        {
+          "tag": "CANVAS",
+          "class": "ready",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "width": 720,
+      "scrollWidth": 720,
+      "overflow": []
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "overflow": []
+    },
+    {
+      "width": 320,
+      "scrollWidth": 320,
+      "overflow": []
+    }
+  ],
+  "passed": false
+}
