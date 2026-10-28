@@ -1,6 +1,6 @@
 {
-  "base": "https://dansojo.github.io/",
-  "date": "2026-10-28T13:36:54.452Z",
+  "base": "http://127.0.0.1:8000/",
+  "date": "2026-10-28T13:40:28.931Z",
   "checks": [
     {
       "name": "Page loads over HTTP",
@@ -20,13 +20,11 @@
     },
     {
       "name": "No horizontal overflow at 768px",
-      "pass": false,
-      "error": "{\"width\":768,\"scrollWidth\":780,\"overflow\":[{\"tag\":\"DIV\",\"class\":\"hero-art\",\"text\":\"IDEAS INTO APPLICATIONSDATA ↔ VISION ↔ AI\"},{\"tag\":\"DIV\",\"class\":\"art-orbit orbit-one\",\"text\":\"\"},{\"tag\":\"DIV\",\"class\":\"art-orbit orbit-two\",\"text\":\"\"},{\"tag\":\"CANVAS\",\"class\":\"ready\",\"text\":\"\"}]}"
+      "pass": true
     },
     {
       "name": "No horizontal overflow at 721px",
-      "pass": false,
-      "error": "{\"width\":721,\"scrollWidth\":730,\"overflow\":[{\"tag\":\"DIV\",\"class\":\"hero-art\",\"text\":\"IDEAS INTO APPLICATIONSDATA ↔ VISION ↔ AI\"},{\"tag\":\"DIV\",\"class\":\"art-orbit orbit-one\",\"text\":\"\"},{\"tag\":\"DIV\",\"class\":\"art-orbit orbit-two\",\"text\":\"\"},{\"tag\":\"CANVAS\",\"class\":\"ready\",\"text\":\"\"}]}"
+      "pass": true
     },
     {
       "name": "No horizontal overflow at 720px",
@@ -48,13 +46,13 @@
       "name": "All seven PDF documents respond with PDF content",
       "pass": true,
       "detail": [
-        "https://dansojo.github.io/assets/documents/ictc.pdf",
-        "https://dansojo.github.io/assets/documents/fundus.pdf",
-        "https://dansojo.github.io/assets/documents/money.pdf",
-        "https://dansojo.github.io/assets/documents/rag.pdf",
-        "https://dansojo.github.io/assets/documents/opencv.pdf",
-        "https://dansojo.github.io/assets/documents/solar.pdf",
-        "https://dansojo.github.io/assets/documents/ictc-poster.pdf"
+        "http://127.0.0.1:8000/assets/documents/ictc.pdf",
+        "http://127.0.0.1:8000/assets/documents/fundus.pdf",
+        "http://127.0.0.1:8000/assets/documents/money.pdf",
+        "http://127.0.0.1:8000/assets/documents/rag.pdf",
+        "http://127.0.0.1:8000/assets/documents/opencv.pdf",
+        "http://127.0.0.1:8000/assets/documents/solar.pdf",
+        "http://127.0.0.1:8000/assets/documents/ictc-poster.pdf"
       ]
     },
     {
@@ -63,8 +61,7 @@
     },
     {
       "name": "PDF dialog interaction at 1440px",
-      "pass": false,
-      "error": "Expected values to be strictly equal:\n+ actual - expected\n\n+ 'https://dansojo.github.io/assets/documents/ictc.pdf#view=FitH'\n- null\n"
+      "pass": true
     },
     {
       "name": "PDF dialog interaction at 390px",
@@ -91,81 +88,45 @@
   "layouts": [
     {
       "width": 1440,
-      "scrollWidth": 1440,
+      "scrollWidth": 1425,
       "overflow": []
     },
     {
       "width": 1024,
-      "scrollWidth": 1024,
+      "scrollWidth": 1009,
       "overflow": []
     },
     {
       "width": 768,
-      "scrollWidth": 780,
-      "overflow": [
-        {
-          "tag": "DIV",
-          "class": "hero-art",
-          "text": "IDEAS INTO APPLICATIONSDATA ↔ VISION ↔ AI"
-        },
-        {
-          "tag": "DIV",
-          "class": "art-orbit orbit-one",
-          "text": ""
-        },
-        {
-          "tag": "DIV",
-          "class": "art-orbit orbit-two",
-          "text": ""
-        },
-        {
-          "tag": "CANVAS",
-          "class": "ready",
-          "text": ""
-        }
-      ]
+      "scrollWidth": 753,
+      "overflow": []
     },
     {
       "width": 721,
-      "scrollWidth": 730,
-      "overflow": [
-        {
-          "tag": "DIV",
-          "class": "hero-art",
-          "text": "IDEAS INTO APPLICATIONSDATA ↔ VISION ↔ AI"
-        },
-        {
-          "tag": "DIV",
-          "class": "art-orbit orbit-one",
-          "text": ""
-        },
-        {
-          "tag": "DIV",
-          "class": "art-orbit orbit-two",
-          "text": ""
-        },
-        {
-          "tag": "CANVAS",
-          "class": "ready",
-          "text": ""
-        }
-      ]
+      "scrollWidth": 706,
+      "overflow": []
     },
     {
       "width": 720,
-      "scrollWidth": 720,
+      "scrollWidth": 705,
       "overflow": []
     },
     {
       "width": 390,
-      "scrollWidth": 390,
+      "scrollWidth": 375,
       "overflow": []
     },
     {
       "width": 320,
-      "scrollWidth": 320,
+      "scrollWidth": 305,
       "overflow": []
     }
   ],
-  "passed": false
+  "browser": "Headed Chromium 141.0.7390.37",
+  "pdfFrames": [
+    "http://127.0.0.1:8000/",
+    "http://127.0.0.1:8000/assets/documents/ictc.pdf#view=FitH",
+    "about:blank"
+  ],
+  "passed": true
 }
