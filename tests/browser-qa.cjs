@@ -12,7 +12,8 @@ async function check(name, run) {
 }
 
 (async () => {
-  const browser = await chromium.launch({ args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+  const browser = await chromium.launch({ headless: false, args: ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'] });
+  report.browser = `Headed Chromium ${browser.version()}`;
   const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
   await context.addInitScript(() => {
     window.__draws = 0;
@@ -88,7 +89,8 @@ async function check(name, run) {
       await trigger.click();
       assert.equal(await page.locator('#pdf-viewer').evaluate(d => d.open), true);
       await page.locator('#pdf-frame').waitFor();
-      await page.waitForTimeout(1200);
+      await page.waitForTimeout(2500);
+      report.pdfFrames = page.frames().map(f => f.url());
       await page.screenshot({ path: `${output}/pdf-${width}.jpg`, quality: 85 });
       assert.equal(await page.locator('#pdf-close').evaluate(e => e === document.activeElement), true);
       assert.equal(await page.locator('#pdf-viewer').evaluate(d => d.scrollWidth <= d.clientWidth + 1), true);
@@ -97,6 +99,7 @@ async function check(name, run) {
       await page.locator('#pdf-download').click();
       assert.equal((await downloadEvent).suggestedFilename(), 'ictc.pdf');
       await page.keyboard.press('Escape');
+      await page.waitForFunction(() => !document.getElementById('pdf-viewer').open && !document.getElementById('pdf-frame').hasAttribute('src'));
       assert.equal(await page.locator('#pdf-viewer').evaluate(d => d.open), false);
       assert.equal(await trigger.evaluate(e => e === document.activeElement), true);
       assert.equal(await page.locator('#pdf-frame').getAttribute('src'), null);

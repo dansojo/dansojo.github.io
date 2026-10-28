@@ -19,8 +19,12 @@ jobs:
           npm install --no-save --ignore-scripts playwright@1.56.1
           npx playwright install --with-deps chromium
           sudo apt-get install -y fonts-noto-cjk
-      - name: Inspect published portfolio in Chromium
-        run: node tests/browser-qa.cjs
+      - name: Serve review branch
+        run: python3 -m http.server 8000 --bind 127.0.0.1 > /tmp/portfolio-server.log 2>&1 &
+      - name: Inspect review branch in Chromium
+        env:
+          QA_BASE_URL: http://127.0.0.1:8000/
+        run: xvfb-run -a node tests/browser-qa.cjs
       - name: Save review evidence on QA branch
         if: always()
         run: |
