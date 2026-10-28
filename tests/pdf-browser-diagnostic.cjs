@@ -1,5 +1,6 @@
 const { chromium } = require('playwright');
 const fs = require('node:fs');
+setTimeout(() => process.exit(1), 90000).unref();
 (async () => {
   const context = await chromium.launchPersistentContext('/tmp/portfolio-pdf-browser', { headless: false, viewport: {width: 1440, height: 1000} });
   const page = await context.newPage();
@@ -9,9 +10,7 @@ const fs = require('node:fs');
   await page.goto('https://dansojo.github.io/', {waitUntil:'networkidle'});
   await page.locator('#work-ictc a[data-pdf]').first().click();
   await page.waitForTimeout(15000);
-  for (const frame of page.frames()) {
-    evidence.frames.push({url:frame.url(), html: await frame.evaluate(() => document.documentElement.outerHTML).catch(e => e.message)});
-  }
+  evidence.frames = page.frames().map(frame => ({url:frame.url()}));
   await page.screenshot({path:'qa-results/pdf-persistent-desktop.jpg',quality:85});
   await page.setViewportSize({width:390,height:844});
   await page.waitForTimeout(3000);
