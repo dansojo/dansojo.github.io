@@ -30,3 +30,17 @@ node tests/liquid.test.cjs
 Content follows the 2026-10-28 supplied production handoff. Project PDFs are unchanged originals. ICTC poster comes from `dansojo/ictc2026-missingness-stress-test/docs/assets/ictc_poster_A0_841x1189mm.pdf` (Git blob `293725da0cbf2e1b90a73afcd37f0d7462df8d94`). Phone number and address are omitted from the web resume.
 
 Publish the repository root from `main` with GitHub Pages. `.nojekyll` keeps static assets intact. PDFs and screenshots are portfolio materials and are not implicitly licensed as software.
+
+## A4 combined PDF
+
+The header and hero provide a direct download of `assets/documents/taeho-kim-portfolio-a4.pdf`. The 9-page A4 portrait document includes all resume/project prose, collapsed role/evaluation notes, screenshots, research poster and clickable source links. It does not append the full original project PDF decks. The unavailable paper manuscript remains explicitly excluded.
+
+To regenerate on macOS without external dependencies:
+
+```sh
+python3 scripts/export-content.py /private/tmp/resume-export.json
+swift scripts/build-pdf.swift /private/tmp/resume-export.json "$PWD" "$PWD/assets/documents/taeho-kim-portfolio-a4.pdf"
+swift tests/pdf.test.swift "$PWD"
+```
+
+Rebuild the PDF when website content changes. Generation fails if content overflows its page. The PDF is designed for printing on white paper; the website retains its dark theme.
